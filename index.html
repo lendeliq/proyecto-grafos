@@ -7,45 +7,49 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.26.0/cytoscape.min.js"></script>
     <style>
-        :root { --p-pink: #ff8fa3; --d-pink: #ff4d6d; --white: #fff; --bg: #fff5f7; --txt: #4a4a4a; }
+        :root { --p-pink: #ff8fa3; --d-pink: #ff4d6d; --white: #fff; --bg: #fff5f7; --txt: #4a4a4a; --shadow: 0 4px 15px rgba(0,0,0,0.05); }
         * { box-sizing: border-box; }
         body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--txt); margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
         
-        /* Navegación */
-        header { background: var(--white); box-shadow: 0 4px 20px rgba(0,0,0,0.05); padding: 12px 20px; z-index: 10; }
+        header { background: var(--white); box-shadow: var(--shadow); padding: 12px 20px; z-index: 10; }
         .nav-container { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
         .logo { color: var(--d-pink); font-weight: 600; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
-        nav { display: flex; gap: 8px; }
+        nav { display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; }
         .nav-btn { border: none; background: none; padding: 8px 15px; cursor: pointer; border-radius: 20px; font-family: inherit; transition: 0.3s; font-size: 0.9rem; }
         .nav-btn.active { background: var(--d-pink); color: #fff; }
 
         .main-view { flex: 1; overflow-y: auto; padding: 20px; }
-        .tab-content { display: none; max-width: 1100px; margin: 0 auto; animation: fadeIn 0.4s ease; }
+        .tab-content { display: none; max-width: 1100px; margin: 0 auto; }
         .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Pantalla de Inicio Especial */
-        .landing-hero { height: 70vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; border-radius: 30px; box-shadow: var(--shadow); margin-top: 20px; border: 2px solid #ffeef2; }
-        .landing-hero .big-logo { font-size: 5rem; margin-bottom: 10px; }
+        .landing-hero { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: white; border-radius: 30px; box-shadow: var(--shadow); margin-top: 20px; border: 2px solid #ffeef2; padding: 60px 20px; }
         .landing-hero h1 { font-size: 2.2rem; color: var(--d-pink); margin: 0; letter-spacing: 2px; }
-        .landing-hero h2 { font-weight: 300; color: #888; margin-top: 10px; font-size: 1.2rem; }
-
-        /* Cards e Info */
+        .profile-container { text-align: left; background: var(--bg); padding: 25px; border-radius: 15px; margin-top: 25px; width: 100%; max-width: 500px; line-height: 1.8; border-left: 5px solid var(--d-pink); }
+        
         .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
-        .card { background: var(--white); padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.03); border: 1px solid #ffeef2; }
+        .card { background: var(--white); padding: 20px; border-radius: 15px; box-shadow: var(--shadow); border: 1px solid #ffeef2; }
         .card h3 { color: var(--d-pink); margin-top: 0; font-size: 1.1rem; }
         .video-link { display: block; background: var(--bg); padding: 10px; border-radius: 8px; text-decoration: none; color: var(--d-pink); margin-bottom: 8px; font-weight: 600; border-left: 3px solid var(--d-pink); }
 
-        /* Editor */
-        #editor-view { display: flex; flex-direction: column; height: 80vh; gap: 10px; }
-        #cy-container { flex: 1; background: var(--white); border-radius: 15px; border: 2px solid #eee; position: relative; overflow: hidden; }
+        #editor-view { display: flex; flex-direction: column; gap: 15px; padding-bottom: 30px; }
+        #cy-container { background: var(--white); border-radius: 15px; border: 2px solid #eee; position: relative; height: 55vh; min-height: 400px; }
         #cy { position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
-        .toolbar { display: flex; gap: 10px; background: var(--white); padding: 10px; border-radius: 12px; align-items: center; }
+        .toolbar { display: flex; gap: 10px; background: var(--white); padding: 10px; border-radius: 12px; align-items: center; flex-wrap: wrap; }
 
-        /* Modales */
-        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--white); padding: 25px; border-radius: 15px; z-index: 1000; border: 1px solid var(--p-pink); box-shadow: 0 20px 40px rgba(0,0,0,0.1); width: 300px; }
-        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.15); backdrop-filter: blur(3px); z-index: 999; }
-        .btn { background: var(--d-pink); color: #fff; border: none; padding: 10px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: 600; margin-top: 10px; }
+        .matrix-wrapper { background: var(--white); border-radius: 15px; padding: 20px; box-shadow: var(--shadow); overflow-x: auto; margin-top: 10px; border: 1px solid #eee; }
+        .matrix-table { width: 100%; border-collapse: collapse; text-align: center; font-size: 0.95rem; }
+        .matrix-table th, .matrix-table td { border: 1px solid #ddd; padding: 10px; min-width: 50px; }
+        .matrix-table th { background-color: var(--p-pink); color: white; }
+        .matrix-table .highlight { background-color: #fff0f3; color: var(--d-pink); font-weight: bold; }
+        .matrix-table .corner { background-color: var(--d-pink); }
+
+        .stats-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; background: #fff0f3; padding: 15px 25px; border-radius: 10px; margin-top: 15px; border: 1px solid var(--p-pink); text-align: center; }
+        .stats-box p { margin: 0; font-size: 1.05rem; color: var(--d-pink); }
+
+    
+        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--white); padding: 25px; border-radius: 15px; z-index: 1000; border: 1px solid var(--p-pink); box-shadow: 0 10px 30px rgba(0,0,0,0.15); width: 300px; }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 999; }
+        .btn { background: var(--d-pink); color: #fff; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; }
         input, select { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; }
     </style>
 </head>
@@ -58,67 +62,81 @@
             <button class="nav-btn active" onclick="tab('home')">Inicio</button>
             <button class="nav-btn" onclick="tab('info')">Información</button>
             <button class="nav-btn" onclick="tab('editor')">Editor</button>
+            <button class="nav-btn" onclick="tab('contact')">Contacto</button>
         </nav>
     </div>
 </header>
 
 <div class="main-view">
     <section id="home" class="tab-content active">
-    <div class="landing-hero">
-        <img src="https://tja.ucb.edu.bo/wp-content/uploads/2020/09/logo-UCB.png"
-            alt="Logo"
-            style="width: 180px; height: auto; margin-bottom: 20px; mix-blend-mode: multiply;">
-        
-        <h1>ANÁLISIS DE ALGORITMOS</h1>
-        <h2 style="color: var(--d-pink); font-weight: 600;">Aylen Claros Marquez</h2>
-        
-        <button class="btn" style="width: 220px; margin-top: 30px; border-radius: 25px;" onclick="tab('editor')">
-            Empezar Proyecto
-        </button>
-    </div>
-</section>
+        <div class="landing-hero" style="height: 70vh;">
+            <img src="https://tja.ucb.edu.bo/wp-content/uploads/2020/09/logo-UCB.png" alt="Logo" style="width: 180px; height: auto; margin-bottom: 20px; mix-blend-mode: multiply;">
+            <h1>ANÁLISIS DE ALGORITMOS</h1>
+            <p style="color: #888; font-size: 1.1rem; max-width: 500px; margin-top: 15px;">Herramienta interactiva para el modelado, visualización y cálculo de grafos.</p>
+            <button class="btn" style="width: 220px; margin-top: 30px; border-radius: 25px;" onclick="tab('editor')">Empezar Proyecto</button>
+        </div>
+    </section>
 
     <section id="info" class="tab-content">
-            <div class="info-grid">
-            <div class="card"><h3>Conceptos Base</h3><p>Un grafo es un conjunto de objetos llamados vértices (o nodos) unidos por enlaces llamados aristas. En el análisis de algoritmos, esta estructura nos permite modelar desde redes de transporte hasta conexiones neuronales. Es la forma más pura de representar relaciones abstractas entre datos, donde la ubicación no importa tanto como la conexión.</p></div>
-            <div class="card"><h3>Direccionalidad</h3><p>La direccionalidad define el flujo de la información. Un grafo dirigido (o dígrafo) indica un sentido único (como seguir a alguien en redes sociales), mientras que uno no dirigido representa una relación recíproca (como una amistad mutua). Identificar el tipo de grafo es el primer paso para elegir el algoritmo de búsqueda correcto.</p></div>
-            <div class="card"><h3>Algoritmo de Dijkstra</h3><p>Es el pilar de la optimización en grafos. Se utiliza para encontrar el camino más corto desde un nodo origen hacia todos los demás en un grafo con pesos positivos. Su magia reside en una estrategia "codiciosa" (greedy), seleccionando siempre el nodo más cercano no visitado para garantizar la eficiencia máxima en el cálculo de rutas.</p></div>
-            <div class="card"><h3>Eficiencia Computacional</h3><p>El rendimiento es el corazón del análisis. No basta con que un algoritmo funcione; debe ser escalable. La eficiencia se mide con la notación Big O, donde buscamos optimizar el equilibrio entre el tiempo de ejecución y el uso de memoria. En grafos masivos, elegir la estructura de datos adecuada (Listas de Adyacencia) marca la diferencia entre el éxito y el colapso del sistema.</p></div>
-            <div class="card"><h3>Impacto</h3><p>Los algoritmos de grafos no son solo teoría. Son el motor detrás del PageRank de Google, las sugerencias de rutas en Google Maps y la logística de entrega de paquetes a nivel mundial. Al estudiar estos modelos, estamos aprendiendo las reglas que optimizan el flujo de la sociedad moderna, convirtiendo problemas complejos en soluciones lógicas</p></div>
+        <div class="info-grid">
+            <div class="card"><h3>Conceptos Base</h3><p>Un grafo es un conjunto de objetos llamados vértices (o nodos) unidos por enlaces llamados aristas. Modela desde redes de transporte hasta conexiones neuronales.</p></div>
+            <div class="card"><h3>Direccionalidad</h3><p>Define el flujo de la información. Un grafo dirigido indica un sentido único, mientras que uno no dirigido representa una relación recíproca.</p></div>
+            <div class="card"><h3>Algoritmo de Dijkstra</h3><p>Pilar de la optimización en grafos. Utiliza una estrategia greedy para encontrar el camino más corto desde un nodo origen hacia todos los demás.</p></div>
+            <div class="card"><h3>Eficiencia Computacional</h3><p>La eficiencia se mide con la notación Big O. En grafos masivos, elegir la estructura adecuada marca la diferencia entre el éxito y el colapso.</p></div>
+            <div class="card"><h3>Impacto</h3><p>Son el motor detrás del PageRank de Google y la logística mundial, convirtiendo problemas complejos en soluciones lógicas y matemáticas.</p></div>
             <div class="card">
                 <h3>Videotutoriales</h3>
                 <a href="https://www.youtube.com/watch?v=hcbXC3qigaI" target="_blank" class="video-link">Introducción a algoritmos</a>
                 <a href="https://www.youtube.com/watch?v=fgdCNuGPJnw" target="_blank" class="video-link">Dijkstra Explicado</a>
-                <a href="https://www.youtube.com/watch?v=w6Pkf5UloEI" target="_blank" class="video-link">Introducción a Grafos</a>
             </div>
         </div>
-
     </section>
 
     <section id="editor" class="tab-content">
         <div id="editor-view">
             <div class="toolbar">
                 <button onclick="cy.$(':selected').remove()" style="background:#ff4d4d; color:white; border:none; padding:8px 15px; border-radius:8px; cursor:pointer">Borrar</button>
-                <button onclick="cy.elements().remove()" style="background:#eee; border:none; padding:8px 15px; border-radius:8px; cursor:pointer">Limpiar</button>
-                <small style="color:#888; margin-left:auto">Doble clic: Nodo | Doble clic en nodo: Renombrar | Clic entre nodos para unirlos | Doble clic en arista: Editar</small>
+                <button onclick="cy.elements().remove(); document.getElementById('matrix-output').innerHTML='';" style="background:#eee; border:none; padding:8px 15px; border-radius:8px; cursor:pointer">Limpiar</button>
+                <small style="color:#888; margin-left:auto">Doble clic: Crear/Editar | Clic entre nodos: Conectar | Clic en el elemento y luego en Borrar para suprimirlo</small>
             </div>
+            
             <div id="cy-container"><div id="cy"></div></div>
+            
+            <div style="text-align: center; margin-top: 10px;">
+                <button class="btn" onclick="generateMatrix()">📊 Generar Matriz de Adyacencia</button>
+            </div>
+
+            <div id="matrix-output"></div>
+        </div>
+    </section>
+
+    <section id="contact" class="tab-content">
+        <div class="landing-hero" style="height: auto;">
+            <h1 style="font-size: 2.8rem; color: var(--txt);">Aylen Claros Marquez</h1>
+            <h2 style="color: var(--p-pink); font-weight: 600; margin-top: 5px;">Ingeniería</h2>
+            <div class="profile-container">
+                <p>📍 <b>Ubicación:</b> La Paz, Bolivia</p>
+                <p>🎓 <b>Correo:</b> aylen.claros@ucb.edu.bo</p>
+                <p>💻 <b>Número:</b> 75866431</p>
+            </div>
+            <button class="btn" style="margin-top: 30px;" onclick="window.location.href='mailto:tucorreo@ejemplo.com'">Enviar Correo</button>
         </div>
     </section>
 </div>
 
 <div class="overlay" id="overlay" onclick="closeM()"></div>
 <div id="m-edge" class="modal">
-    <h3>Configurar Arista</h3>
-    <label>Peso:</label><input type="number" id="ew" value="1">
+    <h3>Arista</h3>
+    <label>Peso Numérico:</label><input type="number" id="ew" value="1">
     <label>Color:</label><input type="color" id="ec" value="#ff8fa3">
-    <select id="ed"><option value="none">Simple</option><option value="dir">Dirigida</option></select>
-    <button class="btn" onclick="saveE()">Guardar</button>
+    <label>Dirección:</label>
+    <select id="ed"><option value="none">Bidireccional</option><option value="dir">Unidireccional</option></select>
+    <button class="btn" style="width: 100%;" onclick="saveE()">Guardar</button>
 </div>
 <div id="m-node" class="modal">
-    <h3>Nombre del Nodo</h3>
+    <h3>Nodo</h3>
     <input type="text" id="nl">
-    <button class="btn" onclick="saveN()">Actualizar</button>
+    <button class="btn" style="width: 100%;" onclick="saveN()">Actualizar</button>
 </div>
 
 <script>
@@ -126,47 +144,32 @@
     const tab = (id) => {
         document.querySelectorAll('.tab-content, .nav-btn').forEach(e => e.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        // Buscamos el botón de nav por su texto o id para activarlo
         const btns = document.querySelectorAll('.nav-btn');
         if(id === 'home') btns[0].classList.add('active');
         if(id === 'info') btns[1].classList.add('active');
-        if(id === 'editor') {
-            btns[2].classList.add('active');
-            setTimeout(() => cy.resize(), 50);
-        }
+        if(id === 'editor') { btns[2].classList.add('active'); setTimeout(() => cy.resize(), 50); }
+        if(id === 'contact') btns[3].classList.add('active');
     }
 
     const cy = cytoscape({
         container: document.getElementById('cy'),
         style: [
-            { selector: 'node', style: { 'background-color': '#ff8fa3', 'label': 'data(label)', 'text-valign': 'center', 'color': '#fff', 'width': 45, 'height': 45, 'font-size': 10, 'font-family': 'Poppins' } },
-            { selector: 'edge', style: { 'width': 4, 'line-color': 'data(color)', 'target-arrow-color': 'data(color)', 'curve-style': 'bezier', 'label': 'data(weight)', 'color': 'data(color)', 'font-size': 12, 'text-margin-y': -10 } },
+            { selector: 'node', style: { 'background-color': '#ff8fa3', 'label': 'data(label)', 'text-valign': 'center', 'color': '#fff', 'width': 45, 'height': 45, 'font-size': 11, 'font-family': 'Poppins' } },
+            { selector: 'edge', style: { 'width': 4, 'line-color': 'data(color)', 'target-arrow-color': 'data(color)', 'curve-style': 'bezier', 'label': 'data(weight)', 'color': 'data(color)', 'font-size': 13, 'font-weight': 'bold', 'text-margin-y': -12 } },
             { selector: 'node:selected', style: { 'border-width': 4, 'border-color': '#ff4d6d' } },
             { selector: 'edge.dir', style: { 'target-arrow-shape': 'triangle' } }
         ]
     });
 
-    cy.on('dbltap', (e) => {
-        if (e.target === cy) cy.add({ group: 'nodes', data: { id: 'n'+Date.now(), label: 'N' + nodeC++ }, position: e.position });
-    });
-
-    cy.on('dbltap', 'node', (e) => {
-        curr = e.target; document.getElementById('nl').value = curr.data('label');
-        openM('m-node');
-    });
-
+    cy.on('dbltap', (e) => { if (e.target === cy) cy.add({ group: 'nodes', data: { id: 'n'+Date.now(), label: 'N' + nodeC++ }, position: e.position }); });
+    cy.on('dbltap', 'node', (e) => { curr = e.target; document.getElementById('nl').value = curr.data('label'); openM('m-node'); });
     cy.on('tap', 'node', (e) => {
         if (!selN) { selN = e.target; selN.select(); } 
-        else { 
-            cy.add({ group: 'edges', data: { source: selN.id(), target: e.target.id(), weight: 1, color: '#ff8fa3' } }); 
-            selN.unselect(); selN = null; 
-        }
+        else { cy.add({ group: 'edges', data: { source: selN.id(), target: e.target.id(), weight: 1, color: '#ff8fa3' } }); selN.unselect(); selN = null; }
     });
-
     cy.on('tap', 'edge', (e) => {
-        curr = e.target;
-        document.getElementById('ew').value = curr.data('weight');
-        document.getElementById('ec').value = curr.data('color');
+        curr = e.target; document.getElementById('ew').value = curr.data('weight');
+        document.getElementById('ec').value = curr.data('color'); document.getElementById('ed').value = curr.hasClass('dir') ? 'dir' : 'none';
         openM('m-edge');
     });
 
@@ -175,8 +178,66 @@
     function saveN() { curr.data('label', document.getElementById('nl').value); closeM(); }
     function saveE() {
         curr.data({ weight: document.getElementById('ew').value, color: document.getElementById('ec').value });
-        curr.toggleClass('dir', document.getElementById('ed').value === 'dir');
-        closeM();
+        curr.toggleClass('dir', document.getElementById('ed').value === 'dir'); closeM();
+    }
+
+    function generateMatrix() {
+        const nodes = cy.nodes().toArray(), n = nodes.length;
+        const outputDiv = document.getElementById('matrix-output');
+        if (n === 0) { outputDiv.innerHTML = '<p style="text-align:center;">Lienzo vacío.</p>'; return; }
+
+        const nodeIds = nodes.map(n => n.id()), labels = nodes.map(n => n.data('label'));
+        let M = Array(n).fill(0).map(() => Array(n).fill(0));
+        
+        cy.edges().forEach(edge => {
+            const sIdx = nodeIds.indexOf(edge.data('source')), tIdx = nodeIds.indexOf(edge.data('target'));
+            const w = parseFloat(edge.data('weight')) || 0;
+            if (sIdx !== -1 && tIdx !== -1) {
+                M[sIdx][tIdx] = w;
+                if (!edge.hasClass('dir') && sIdx !== tIdx) M[tIdx][sIdx] = w;
+            }
+        });
+
+        let rowSum = Array(n).fill(0), rowCount = Array(n).fill(0), colSum = Array(n).fill(0), colCount = Array(n).fill(0);
+        for (let i = 0; i < n; i++) {
+            for (let j = 0; j < n; j++) {
+                let val = M[i][j];
+                rowSum[i] += val; colSum[j] += val;
+                if (val !== 0) { rowCount[i]++; colCount[j]++; }
+            }
+        }
+
+        const maxRowSum = Math.max(...rowSum), maxColSum = Math.max(...colSum);
+        const maxRowCount = Math.max(...rowCount), maxColCount = Math.max(...colCount);
+
+        let html = '<div class="matrix-wrapper"><table class="matrix-table">';
+        html += '<tr><th class="corner">Nodos</th>';
+        labels.forEach(l => html += `<th>${l}</th>`);
+        html += '<th class="highlight">Suma Fila</th><th class="highlight">Conteo Fila</th></tr>';
+
+        for (let i = 0; i < n; i++) {
+            html += `<tr><th>${labels[i]}</th>`;
+            for (let j = 0; j < n; j++) html += `<td>${M[i][j] === 0 ? '-' : M[i][j]}</td>`;
+            html += `<td class="highlight">${rowSum[i]}</td><td class="highlight">${rowCount[i]}</td></tr>`;
+        }
+
+        html += '<tr><th class="highlight">Suma Columna</th>';
+        for (let j = 0; j < n; j++) html += `<td class="highlight">${colSum[j]}</td>`;
+        html += '<td style="border:none;"></td><td style="border:none;"></td></tr>';
+
+        html += '<tr><th class="highlight">Conteo Columna</th>';
+        for (let j = 0; j < n; j++) html += `<td class="highlight">${colCount[j]}</td>`;
+        html += '<td style="border:none;"></td><td style="border:none;"></td></tr></table></div>';
+
+        html += `<div class="stats-box">
+            <p>📈 <b>Máx Suma (Filas):</b> ${maxRowSum}</p>
+            <p>📈 <b>Máx Suma (Cols):</b> ${maxColSum}</p>
+            <p>🔗 <b>Máx Conteo (Filas):</b> ${maxRowCount}</p>
+            <p>🔗 <b>Máx Conteo (Cols):</b> ${maxColCount}</p>
+        </div>`;
+
+        outputDiv.innerHTML = html;
+        outputDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
 </script>
 </body>
