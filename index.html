@@ -90,7 +90,7 @@
             <div class="toolbar">
                 <button onclick="cy.$(':selected').remove()" style="background:#ff4d4d;color:#fff;border:none;padding:8px 15px;border-radius:8px;cursor:pointer">Borrar</button>
                 <button onclick="cy.elements().remove();document.getElementById('matrix-output').innerHTML=''" style="background:#eee;border:none;padding:8px 15px;border-radius:8px;cursor:pointer">Limpiar</button>
-                <small style="color:#888;margin-left:auto">DblClic: Crear/Editar | Clic secuencial: Conectar</small>
+                <small style="color:#888;margin-left:auto">Doble Clic/Clic Derecho: Crear Nodo | Clic secuencial: Conectar | Clic en arista: editar | Doble Clic en nodo: editar</small>
             </div>
             <div id="cy-container"><div id="cy"></div></div>
             <div class="action-buttons">
@@ -106,11 +106,11 @@
     <section id="contact" class="tab-content">
         <div class="landing-hero" style="height:auto">
             <h1 style="font-size:2.8rem;color:var(--txt)">Aylen Claros Marquez</h1>
-            <h2 style="color:var(--p-pink);font-weight:600;margin-top:5px">Ingeniería</h2>
+            <h2 style="color:var(--p-pink);font-weight:600;margin-top:5px">Ingeniería de Sistemas</h2>
             <div class="profile-container">
-                <p><b>Ubicación:</b> La Paz, Bolivia</p>
-                <p><b>Correo:</b> aylen.claros@ucb.edu.bo</p>
-                <p><b>Número:</b> 75866431</p>
+                <p>📍 <b>Ubicación:</b> La Paz, Bolivia</p>
+                <p>🎓 <b>Correo:</b> aylen.claros@ucb.edu.bo</p>
+                <p>💻 <b>Número:</b> 75866431</p>
             </div>
         </div>
     </section>
@@ -132,7 +132,7 @@
 </div>
 
 <script>
-    let nodeC=1,selN=null,curr=null;
+    let nodeC=1,selN=null,curr=null,lastT=0;
     const tab=id=>{
         document.querySelectorAll('.tab-content,.nav-btn').forEach(e=>e.classList.remove('active'));
         document.getElementById(id).classList.add('active');
@@ -151,8 +151,16 @@
             {selector:'edge.dir',style:{'target-arrow-shape':'triangle'}}
         ]
     });
-    cy.on('dbltap',e=>{if(e.target===cy)cy.add({group:'nodes',data:{id:'n'+Date.now(),label:'N'+nodeC++},position:e.position})});
-    cy.on('dbltap','node',e=>{curr=e.target;document.getElementById('nl').value=curr.data('label');openM('m-node')});
+    
+    cy.on('dblclick dbltap cxttap', e=>{
+        if(e.target===cy){
+            if(Date.now()-lastT<300)return; lastT=Date.now();
+            cy.add({group:'nodes',data:{id:'n'+lastT,label:'N'+nodeC++},position:e.position});
+        }
+    });
+    
+    cy.on('dblclick dbltap','node',e=>{curr=e.target;document.getElementById('nl').value=curr.data('label');openM('m-node')});
+    
     cy.on('tap','node',e=>{if(!selN){selN=e.target;selN.select()}else{cy.add({group:'edges',data:{source:selN.id(),target:e.target.id(),weight:1,color:'#ff8fa3'}});selN.unselect();selN=null}});
     cy.on('tap','edge',e=>{curr=e.target;document.getElementById('ew').value=curr.data('weight');document.getElementById('ec').value=curr.data('color');document.getElementById('ed').value=curr.hasClass('dir')?'dir':'none';openM('m-edge')});
     
